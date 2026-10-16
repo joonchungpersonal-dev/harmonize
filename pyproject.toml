@@ -1,0 +1,25 @@
+[project]
+name = "harmonize"
+version = "0.1.0"
+description = "Deterministic data harmonization engine with an optional LLM shell"
+requires-python = ">=3.10"
+authors = [{name = "Joon Chung", email = "joon.chung.personal@gmail.com"}]
+license = {text = "MIT"}
+readme = "README.md"
+dependencies = ["pydantic>=2", "pyyaml>=6"]
+
+[project.scripts]
+harmonize = "harmonize.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["harmonize*"]
+
+[tool.setuptools.package-data]
+harmonize = ["rlib/*.R"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

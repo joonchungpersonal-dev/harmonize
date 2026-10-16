@@ -1,0 +1,32 @@
+# Frozen crosswalk: PHQ-9 depression pooled across NHANES 2015-16 + 2017-18.
+# The LLM proposes this once; `harmonize apply` replays it deterministically.
+# Run: harmonize apply examples/nhanes_phq9.crosswalk.yaml --out /tmp/out \
+#        --data-dir ~/nhanes-scratch/demo
+version: 1
+construct: depression_phq9
+key: [SEQN, cycle] # composite key — SEQN is reused across cycles (grill #8)
+sources:
+  - id: "2015-2016"
+    path: DPQ_I.rds
+  - id: "2017-2018"
+    path: DPQ_J.rds
+sentinels:
+  default: [7, 9] # 7=refused, 9=don't know (codebook-driven, grill #9)
+items:
+  - {name: phq_1, source_vars: {"2015-2016": DPQ010, "2017-2018": DPQ010}, coding: ordinal_0_3}
+  - {name: phq_2, source_vars: {"2015-2016": DPQ020, "2017-2018": DPQ020}, coding: ordinal_0_3}
+  - {name: phq_3, source_vars: {"2015-2016": DPQ030, "2017-2018": DPQ030}, coding: ordinal_0_3}
+  - {name: phq_4, source_vars: {"2015-2016": DPQ040, "2017-2018": DPQ040}, coding: ordinal_0_3}
+  - {name: phq_5, source_vars: {"2015-2016": DPQ050, "2017-2018": DPQ050}, coding: ordinal_0_3}
+  - {name: phq_6, source_vars: {"2015-2016": DPQ060, "2017-2018": DPQ060}, coding: ordinal_0_3}
+  - {name: phq_7, source_vars: {"2015-2016": DPQ070, "2017-2018": DPQ070}, coding: ordinal_0_3}
+  - {name: phq_8, source_vars: {"2015-2016": DPQ080, "2017-2018": DPQ080}, coding: ordinal_0_3}
+  - {name: phq_9, source_vars: {"2015-2016": DPQ090, "2017-2018": DPQ090}, coding: ordinal_0_3}
+composite:
+  name: phq9_total
+  rule: sum
+  min_items_present: 9 # complete-case (proration policy, grill #4)
+exclusions:
+  - construct: hh_ref_education
+    source_vars: {"2015-2016": DMDHREDU, "2017-2018": DMDHREDZ}
+    reason: "renamed DMDHREDU->DMDHREDZ across cycles; categories unverified (grill #1/#6)"
